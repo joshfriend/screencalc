@@ -127,7 +127,7 @@ read: doc
 # Static Analysis ##############################################################
 
 .PHONY: check
-check: flake8 pep257
+check: flake8
 
 .PHONY: flake8
 flake8: depends-ci
