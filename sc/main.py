@@ -5,6 +5,7 @@ import re
 import click
 from tabulate import tabulate
 
+from ._compat import iteritems
 from .conversions import (
     _to_dp,
     _from_dp,
@@ -66,7 +67,7 @@ SCREEN_SIZE_TYPE = ScreenSizeParamType()
 def convert(value, unit, density=DENSITY_DEFAULT, scale=1.0):
     dp = _to_dp[unit](value, density, scale)
     results = []
-    for dn, dv in DENSITY_VALUE_MAP.iteritems():
+    for dn, dv in iteritems(DENSITY_VALUE_MAP):
         row = [dn + 'dpi']
         for unit in UNITS:
             row.append(_from_dp[unit](dp, dv, scale))
