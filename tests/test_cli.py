@@ -91,4 +91,3 @@ class TestCLI(object):
         """)  # NOQA
         r = runner.invoke(main, ['100px@xxhdpi'])
         assert r.output == exp
-

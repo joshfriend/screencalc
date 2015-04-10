@@ -4,7 +4,7 @@
 
 import pytest
 
-from sc.main import  parse_size
+from sc.main import parse_size
 from sc.conversions import DENSITY_DEFAULT, DENSITY_NAMES, DENSITY_VALUES
 
 

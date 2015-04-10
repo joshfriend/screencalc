@@ -6,8 +6,8 @@ EGG_INFO := $(subst -,_,$(PROJECT)).egg-info
 
 # Python settings
 ifndef TRAVIS
-	PYTHON_MAJOR := 2
-	PYTHON_MINOR := 7
+	PYTHON_MAJOR := 3
+	PYTHON_MINOR := 4
 endif
 
 # System paths
@@ -131,7 +131,7 @@ check: flake8 pep257
 
 .PHONY: flake8
 flake8: depends-ci
-	$(FLAKE8) $(PACKAGE)
+	$(FLAKE8) $(PACKAGE) tests
 
 .PHONY: pep257
 pep257: depends-ci
