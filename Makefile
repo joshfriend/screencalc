@@ -86,13 +86,13 @@ depends: depends-ci depends-dev
 .PHONY: depends-ci
 depends-ci: env Makefile $(DEPENDS_CI)
 $(DEPENDS_CI): Makefile
-	$(PIP) install --upgrade pep8 pep257 coverage pytest pytest-cov
+	$(PIP) install --upgrade flake8 pep257 coverage pytest pytest-cov
 	touch $(DEPENDS_CI)  # flag to indicate dependencies are installed
 
 .PHONY: depends-dev
 depends-dev: env Makefile $(DEPENDS_DEV)
 $(DEPENDS_DEV): Makefile
-	$(PIP) install --upgrade pip flake8 pygments docutils pdoc wheel readme
+	$(PIP) install --upgrade pip pygments docutils pdoc wheel readme
 	touch $(DEPENDS_DEV)  # flag to indicate dependencies are installed
 
 # Documentation ################################################################
