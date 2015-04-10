@@ -27,6 +27,10 @@ DENSITY_NAMES_MAP = odict(zip(DENSITY_VALUES, DENSITY_NAMES))
 _ignored = object()
 
 
+def dp_to_dp(dp, density=_ignored, scale=_ignored):
+    return dp
+
+
 def px_to_dp(px, density=DENSITY_DEFAULT, scale=_ignored):
     return px / (density / DENSITY_DEFAULT)
 
@@ -65,12 +69,11 @@ def dp_to_pt(dp, density=DENSITY_DEFAULT, scale=_ignored):
 
 
 def pt_to_dp(pt, density=DENSITY_DEFAULT, scale=_ignored):
-    px = pt / PT_PER_IN / density
-    return px_to_dp(px, density)
+    return pt / (PT_PER_IN / density)
 
 
 _to_dp = {
-    'dp': lambda x, d, s: x,
+    'dp': dp_to_dp,
     'px': px_to_dp,
     'sp': sp_to_dp,
     'mm': mm_to_dp,
@@ -79,7 +82,7 @@ _to_dp = {
 }
 
 _from_dp = {
-    'dp': lambda x, d, s: x,
+    'dp': dp_to_dp,
     'px': dp_to_px,
     'sp': dp_to_sp,
     'mm': dp_to_mm,

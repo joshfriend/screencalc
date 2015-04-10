@@ -1,5 +1,6 @@
 [run]
 branch = true
 omit =
+    */_compat.py
     */env/*
     */test/*

@@ -6,8 +6,8 @@ EGG_INFO := $(subst -,_,$(PROJECT)).egg-info
 
 # Python settings
 ifndef TRAVIS
-	PYTHON_MAJOR := 2
-	PYTHON_MINOR := 7
+	PYTHON_MAJOR := 3
+	PYTHON_MINOR := 4
 endif
 
 # System paths
@@ -86,19 +86,19 @@ depends: depends-ci depends-dev
 .PHONY: depends-ci
 depends-ci: env Makefile $(DEPENDS_CI)
 $(DEPENDS_CI): Makefile
-	$(PIP) install --upgrade pep8 pep257 coverage pytest pytest-cov
+	$(PIP) install --upgrade flake8 pep257 coverage pytest pytest-cov
 	touch $(DEPENDS_CI)  # flag to indicate dependencies are installed
 
 .PHONY: depends-dev
 depends-dev: env Makefile $(DEPENDS_DEV)
 $(DEPENDS_DEV): Makefile
-	$(PIP) install --upgrade pip flake8 pygments docutils pdoc wheel
+	$(PIP) install --upgrade pip pygments docutils pdoc wheel readme
 	touch $(DEPENDS_DEV)  # flag to indicate dependencies are installed
 
 # Documentation ################################################################
 
 .PHONY: doc
-doc: readme apidocs
+doc: readme verify-readme apidocs
 
 .PHONY: readme
 readme: depends-dev README-github.html README-pypi.html
@@ -108,6 +108,10 @@ README-pypi.html: README.rst
 	$(RST2HTML) README.rst README-pypi.html
 README.rst: README.md
 	pandoc -f markdown_github -t rst -o README.rst README.md
+
+.PHONY: verify-readme
+verify-readme: README.rst
+	$(PYTHON) setup.py check -rsm
 
 .PHONY: apidocs
 apidocs: depends-dev apidocs/$(PACKAGE)/index.html
@@ -123,11 +127,11 @@ read: doc
 # Static Analysis ##############################################################
 
 .PHONY: check
-check: flake8 pep257
+check: flake8
 
 .PHONY: flake8
 flake8: depends-ci
-	$(FLAKE8) $(PACKAGE)
+	$(FLAKE8) $(PACKAGE) tests
 
 .PHONY: pep257
 pep257: depends-ci
@@ -186,20 +190,25 @@ clean-all: clean clean-env .clean-workspace
 
 # Release ######################################################################
 
+.PHONY: register-test
+register-test: doc
+	$(PYTHON) setup.py register --strict --repository https://testpypi.python.org/pypi
+
+.PHONY: upload-test
+upload-test: .git-no-changes register-test
+	$(PYTHON) setup.py sdist upload --repository https://testpypi.python.org/pypi
+	$(PYTHON) setup.py bdist_wheel upload --repository https://testpypi.python.org/pypi
+	$(OPEN) https://testpypi.python.org/pypi/$(PROJECT)
+
 .PHONY: register
 register: doc
-	$(PYTHON) setup.py register
-
-.PHONY: dist
-dist: check doc test tests
-	$(PYTHON) setup.py sdist
-	$(PYTHON) setup.py bdist_wheel
-	$(MAKE) read
+	$(PYTHON) setup.py register --strict
 
 .PHONY: upload
-upload: .git-no-changes doc
-	$(PYTHON) setup.py register sdist upload
+upload: .git-no-changes register
+	$(PYTHON) setup.py sdist upload
 	$(PYTHON) setup.py bdist_wheel upload
+	$(OPEN) https://pypi.python.org/pypi/$(PROJECT)
 
 .PHONY: .git-no-changes
 .git-no-changes:
